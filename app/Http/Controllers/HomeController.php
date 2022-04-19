@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Genre;
+use App\Models\Book;
+use App\Models\Borrow;
 
 class HomeController extends Controller
 {
@@ -13,7 +17,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -23,6 +27,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $users = User::all();
+        $genres = Genre::all();
+        $books = Book::all();
+        $active_rentals = Borrow::where('status', 'ACCEPTED')->get();
+        return view('home', [
+            'users' => count($users),
+            'genres_count' => count($genres),
+            'books' => count($books),
+            'book_rentals' => count($active_rentals),
+            'genres' => $genres
+        ]);
     }
 }

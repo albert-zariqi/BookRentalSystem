@@ -22,14 +22,14 @@ class Book extends Model
     ];
 
     public function borrows() {
-        return $this->hasMany(Borrow::class, 'book_id');
+        return $this->hasMany(Borrow::class);
     }
 
     public function activeBorrows() {
-    return $this->getAllBorrows()->where('status', '=', 'ACCEPTED');
+    return $this->borrows()->where('status', '=', 'ACCEPTED');
     }
 
     public function genres() {
-        return $this->belongsToMany(Genre::class, 'book_id');
+        return $this->belongsToMany(Genre::class, 'book_genre');
     }
 }

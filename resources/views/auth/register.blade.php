@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('content')
 <div class="container">
@@ -61,6 +61,19 @@
                             </div>
                         </div>
 
+                        <div class="row mb-3">
+                            <label for="is_librarian" class="col-md-4 col-form-label text-md-end">{{ __('Is Librarian') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="is_librarian" type="checkbox" class="form-control @error('is_librarian') is-invalid @enderror" name="is_librarian" value='1'>
+
+                                @error('is_librarian')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">

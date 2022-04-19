@@ -2,24 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
-use App\Models\Genre;
 use Illuminate\Http\Request;
-use App\Http\Requests\BookFormRequest;
+use App\Models\Genre;
+use App\Models\Book;
 
-
-class BookController extends Controller
+class GenreController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
-        $books = Book::all();
-        return view('books.index', [
-            'books' => $books
-        ]);
+    public function index()
+    {
+        //
     }
 
     /**
@@ -29,10 +25,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        $genres = Genre::all();
-        return view('books/create', [
-            'genres' => $genres
-        ]);
+        //
     }
 
     /**
@@ -41,12 +34,9 @@ class BookController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(BookFormRequest $request){
-        $validate_data = $request->validated();
-
-        $book = Book::create($validate_data);
-
-        return redirect()->action('${App\Http\Controllers\HomeController@index}');
+    public function store(Request $request)
+    {
+        //
     }
 
     /**
@@ -55,24 +45,10 @@ class BookController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Book $book){
-        // $activeBorrows = $book->activeBorrows();
-        // dd($activeBorrows);
-        // return;
-        return view('books/detail', [
-            'book' => $book
-            // 'available_books' => count($activeBorrows)
-        ]);
-    }
-
-    public function search(Request $request){
-
-        $books = Book::where('title', 'LIKE', "%{$request['search_text']}%")
-                            ->orWhere('authors', 'LIKE', "%{request['search_text']}%")
-                            ->get();
-
-        return view('books.list', [
-            'books' => $books
+    public function show(Genre $genre)
+    {
+        return view('genres/detail', [
+            'genre' => $genre
         ]);
     }
 
@@ -109,5 +85,4 @@ class BookController extends Controller
     {
         //
     }
-
 }

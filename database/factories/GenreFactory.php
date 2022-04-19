@@ -16,8 +16,10 @@ class GenreFactory extends Factory
      */
     public function definition()
     {
+        $available_genres = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
         return [
-            //
+            'name' => $this->faker->word(),
+            'style' => $available_genres[rand(0, 7)]
         ];
     }
 }
