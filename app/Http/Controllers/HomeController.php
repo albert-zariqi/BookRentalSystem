@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Genre;
 use App\Models\Book;
 use App\Models\Borrow;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -38,5 +39,16 @@ class HomeController extends Controller
             'book_rentals' => count($active_rentals),
             'genres' => $genres
         ]);
+    }
+
+    public function profile(){
+        if (Auth::check()){
+            $user = Auth::user();
+            return view('profile',[
+                'user' => $user
+            ]);
+        }
+
+        return redirect()->action('index');
     }
 }

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\Borrow;
 use Illuminate\Http\Request;
 use App\Http\Requests\BookFormRequest;
+use Illuminate\Support\Facades\Auth;
 
 
 class BookController extends Controller
@@ -29,22 +31,31 @@ class BookController extends Controller
      */
     public function create()
     {
+        if (Auth::check() && !Auth::user()->is_librarian){
+            return response()->json(['error' => 'Unauthorized!'], 403);
+        }
         $genres = Genre::all();
         return view('books/create', [
             'genres' => $genres
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(BookFormRequest $request){
-        $validate_data = $request->validated();
-
-        $book = Book::create($validate_data);
+    public function store(Request $request){
+        dd($request);
+        // $validated_data = $request->validated();
+        return;
+        // $validated_data = $request->validated();
+        // $input = $request->collect();
+        // $book = new Book(){
+        //     'title' => $request->input('title'),
+        //     'authors' => $request->input('authors'),
+        //     'released_at' => $request->input('released_at'),
+        //     'isbn' => $request->input('isbn'),
+        //     'cover_image' => $request->input('cover_image'),
+        //     'pages' => $request->input('pages'),
+        //     'language_code' =>
+        // }
+        // $book = Book::create();
 
         return redirect()->action('${App\Http\Controllers\HomeController@index}');
     }
@@ -56,12 +67,20 @@ class BookController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Book $book){
-        // $activeBorrows = $book->activeBorrows();
-        // dd($activeBorrows);
-        // return;
+        $user_id = Auth::id();
+
+        $active_borrows = Borrow::whereIN('status', array('ACCEPTED', 'PENDING'))
+                                ->where('reader_id', $user_id)
+                                ->where('book_id', $book->id)
+                                ->get();
+
+        $has_active_rental = count($active_borrows) > 0 ? true : false;
+
+
         return view('books/detail', [
-            'book' => $book
-            // 'available_books' => count($activeBorrows)
+            'book' => $book,
+            'active_rental' => $has_active_rental ? 'Yes' : 'No',
+            'has_active_rental' => $has_active_rental
         ]);
     }
 
@@ -82,9 +101,11 @@ class BookController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Book $book)
     {
-        //
+        return view('books/edit', [
+            'book' => $book
+        ]);
     }
 
     /**
@@ -94,9 +115,11 @@ class BookController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Book $book, BookFormRequest $request)
     {
-        //
+        $validated_data = $request->validated();
+        $project->update($validated_data);
+        return redirect()->route('books.show', $book->id);
     }
 
     /**
@@ -105,9 +128,10 @@ class BookController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Book $book)
     {
-        //
+        $book->delete();
+        return redirect()->route('books.index');
     }
 
 }

@@ -32,5 +32,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'is_librarian' => true
         ]);
+
+        User::factory()->count(10)->create();
     }
 }

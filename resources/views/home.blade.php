@@ -21,11 +21,13 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <h3>Genres</h3>
-            <ul>
+            <ul class="col-md-12 list-group">
                 @foreach ($genres as $genre)
-                    <li><a href="{{ route('genres.show', $genre->name)}}">{{$genre->name}}</a></li>
+                        <li class="list-group-item list-group-item-{{$genre->style}}">
+                            <a href="{{ route('genres.show', $genre->id)}}">{{$genre->name}}</a>
+                        </li>
+                            {{-- <a href="{{ route('books.show', $book->id) }}" class="btn btn-primary">Open</a> --}}
                 @endforeach
-
             </ul>
         </div>
     </div>
@@ -91,11 +93,25 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <h3>Genres</h3>
-            <ul>
+            <ul class="col-md-12 list-group">
                 @foreach ($genres as $genre)
-                    <li><a href="{{ route('genres.show', $genre->id)}}">{{$genre->name}}</a></li>
+                        <li class="list-group-item list-group-item-{{$genre->style}}">
+                            <a href="{{ route('genres.show', $genre->id)}}">{{$genre->name}}</a>
+                            <div class="ml-auto float-right">
+                                @auth
+                                    @if(Auth::user()->is_librarian)
+                                        <a href="/genres/{{$genre->id}}/edit" class="btn btn-info">Edit</a>
+                                        <form class="d-inline" method="POST" action="/genres/{{$genre->id}}">
+                                            @csrf
+                                            @method("DELETE")
+                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                        </form>
+                                    @endif
+                                @endauth
+                            <div>
+                        </li>
+                            {{-- <a href="{{ route('books.show', $book->id) }}" class="btn btn-primary">Open</a> --}}
                 @endforeach
-
             </ul>
         </div>
     </div>

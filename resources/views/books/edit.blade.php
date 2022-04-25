@@ -1,16 +1,17 @@
 @extends('layouts.base')
 
 @section('content')
-<h2>New book</h2>
-<form action="{{ route('books.store') }}" method="POST">
-@method("POST")
+<h2>Edit book</h2>
+<form action="/books/{{ $book->id }}" method="post">
+
+@method('put')
 @csrf
 
 <?php $nameField='title'; ?>
-<div class="row col-md-6 form-group">
-    <label for="{{ $nameField }}">Title</label>
+<div class="form-group">
+    <label for="name">Book title</label>
     <input name="{{ $nameField }}" type="text" class="form-control @error($nameField) is-invalid @enderror" id="{{ $nameField }}" placeholder=""
-        value="{{ old($nameField, '') }}"
+        value="{{ old($nameField, $book[$nameField]) }}"
     >
 
     @error($nameField)
@@ -20,9 +21,9 @@
     @enderror
 </div>
 
-<div class="row col-md-6 form-group">
-    <label for="authors">Authors</label>
-    <input type="text" name="authors" class="form-control @error('authors') is-invalid @enderror" id="authors"  value="{{ old('authors', '')}}"/>
+<div class="form-group">
+    <label for="authors">Description</label>
+    <textarea name="authors" class="form-control @error('authors') is-invalid @enderror" id="authors" rows="3">{{ old('authors', $book->authors)}}</textarea>
 
     @error('authors')
     <div class="invalid-feedback">
@@ -31,9 +32,9 @@
     @enderror
 </div>
 
-<div class="row col-md-6 form-group">
+<div class="form-group">
     <label for="released_at">Released at</label>
-    <input name="released_at" type="date" class="form-control @error('released_at') is-invalid @enderror" id="released_at" placeholder="" value="{{ old('released_at', '') }}">
+    <input name="released_at" type="date" class="form-control @error('released_at') is-invalid @enderror" id="released_at" placeholder="" value="{{ old('released_at',  $book->released_at) }}">
 
     @error('released_at')
     <div class="invalid-feedback">
@@ -44,7 +45,7 @@
 
 <div class="row col-md-6 form-group">
     <label for="pages">Pages</label>
-    <input name="pages" type="number" class="form-control @error('pages') is-invalid @enderror" id="pages" placeholder="" value="{{ old('pages', '') }}">
+    <input name="pages" type="number" class="form-control @error('pages') is-invalid @enderror" id="pages" placeholder="" value="{{ old('pages', $book->pages) }}">
 
     @error('pages')
     <div class="invalid-feedback">
@@ -55,7 +56,7 @@
 
 <div class="row col-md-6 form-group">
     <label for="isbn">ISBN</label>
-    <input name="isbn" type="text" class="form-control @error('isbn') is-invalid @enderror" id="isbn" placeholder="" value="{{ old('isbn', '') }}">
+    <input name="isbn" type="text" class="form-control @error('isbn') is-invalid @enderror" id="isbn" placeholder="" value="{{ old('isbn', $book->isbn) }}">
 
     @error('isbn')
     <div class="invalid-feedback">
@@ -65,19 +66,8 @@
 </div>
 
 <div class="row col-md-6 form-group">
-    <label for="language_code">Language code</label>
-    <input name="language_code" type="text" class="form-control @error('language_code') is-invalid @enderror" id="language_code" placeholder="" value="{{ old('language_code', '') }}">
-
-    @error('language_code')
-    <div class="invalid-feedback">
-        {{ $message }}
-    </div>
-    @enderror
-</div>
-
-<div class="row col-md-6 form-group">
     <label for="description">Description</label>
-    <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="description" rows="3">{{ old('description', '')}}</textarea>
+    <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="description" rows="3">{{ old('description', $book->description)}}</textarea>
 
     @error('description')
     <div class="invalid-feedback">
@@ -87,7 +77,7 @@
 </div>
 
 <div class="row col-md-6 form-group d-flex flex-wrap @error('genres') is-invalid @enderror">
-    @foreach ($genres as $genre)
+    @foreach ($book->genres as $genre)
     <div class="custom-control custom-switch col-sm-3">
         <input
             type="checkbox"
@@ -95,6 +85,7 @@
             id="genre-{{ $genre->id }}"
             value="{{ $genre->id }}"
             class="custom-control-input"
+            @if ($book->genres->contains($genre->id)) checked @endif
         >
         <label class="custom-control-label" for="genre-{{ $genre->id }}">{{ $genre->name }}</label>
       </div>
@@ -109,7 +100,7 @@
 
 <div class="row col-md-6 form-group">
     <label for="in_stock">In stock</label>
-    <input name="in_stock" type="number" class="form-control @error('in_stock') is-invalid @enderror" id="in_stock" placeholder="" value="{{ old('in_stock', '') }}">
+    <input name="in_stock" type="number" class="form-control @error('in_stock') is-invalid @enderror" id="in_stock" placeholder="" value="{{ old('in_stock', $book->in_stock) }}">
 
     @error('in_stock')
     <div class="invalid-feedback">
@@ -120,7 +111,7 @@
 
 <div class="row col-md-6 form-group">
     <label for="cover_image">Cover image url</label>
-    <input name="cover_image" type="text" class="form-control @error('cover_image') is-invalid @enderror" id="cover_image" placeholder="" value="{{ old('cover_image', '') }}">
+    <input name="cover_image" type="text" class="form-control @error('cover_image') is-invalid @enderror" id="cover_image" placeholder="" value="{{ old('cover_image', $book->cover_image) }}">
 
     @error('cover_image')
     <div class="invalid-feedback">
@@ -129,8 +120,8 @@
     @enderror
 </div>
 <div class="form-group">
-    <button type="submit" class="btn btn-primary">Add book</button>
+    <button type="submit" class="btn btn-primary">Update book</button>
 </div>
-
 </form>
+
 @endsection

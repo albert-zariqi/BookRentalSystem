@@ -1,11 +1,10 @@
 @extends('layouts.base')
 
 @section('content')
-
 <div class="container">
 
     <div class="row justify-content-center">
-         @if (count($books) > 0)
+        @if (count($books) > 0)
             @foreach ($books as $book)
                 <div class="col-sm-3 my-3">
                     <div class="card h-100">

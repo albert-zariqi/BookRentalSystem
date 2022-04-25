@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Genre;
 use App\Models\Book;
+use App\Http\Requests\GenreFormRequest;
 
 class GenreController extends Controller
 {
@@ -15,7 +16,10 @@ class GenreController extends Controller
      */
     public function index()
     {
-        //
+        $genres = Genre::all();
+        return view('genres.index', [
+            'genres' => $genres
+        ]);
     }
 
     /**
@@ -25,7 +29,11 @@ class GenreController extends Controller
      */
     public function create()
     {
-        //
+        $styles = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
+
+        return view('genres/create', [
+            'styles' => $styles
+        ]);
     }
 
     /**
@@ -34,9 +42,12 @@ class GenreController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(GenreFormRequest $request)
     {
-        //
+        $validated_data = $request->validated();
+
+        Genre::create($validated_data);
+        return redirect()->route('genres.index');
     }
 
     /**
@@ -58,9 +69,13 @@ class GenreController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Genre $genre)
     {
-        //
+        $styles = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
+        return view('genres/edit', [
+            'genre' => $genre,
+            'styles' => $styles
+        ]);
     }
 
     /**
@@ -70,9 +85,11 @@ class GenreController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(GenreFormRequest $request, Genre $genre)
     {
-        //
+        $validated_data = $request->validated();
+        $genre->update($validated_data);
+        return redirect()->route('genres.index');
     }
 
     /**
@@ -81,8 +98,9 @@ class GenreController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Genre $genre)
     {
-        //
+        $genre->delete();
+        return redirect()->route('genres.index');
     }
 }
