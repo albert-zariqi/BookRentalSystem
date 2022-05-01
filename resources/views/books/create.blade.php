@@ -3,8 +3,8 @@
 @section('content')
 <h2>New book</h2>
 <form action="{{ route('books.store') }}" method="POST">
-@method("POST")
 @csrf
+@method('POST')
 
 <?php $nameField='title'; ?>
 <div class="row col-md-6 form-group">

@@ -27,11 +27,20 @@ class BorrowFormRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'reader_id' => 'required|integer',
-            'book_id' => 'required|integer',
+        $rules = [
             'status' => 'required|in:PENDING,ACCEPTED,REJECTED,RETURNED',
             'deadline' => 'nullable|date'
         ];
+
+
+        if (in_array($this->method(), ['POST'])) {
+            $rules['reader_id'] = [
+                'required',
+                'integer'];
+            $rules['book_id'] = [
+                'required',
+                'integer'];
+        }
+        return $rules;
     }
 }

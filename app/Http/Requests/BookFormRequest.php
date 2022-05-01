@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Book;
+use Illuminate\Validation\Rule;
 
 class BookFormRequest extends FormRequest
 {
@@ -28,17 +29,27 @@ class BookFormRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'title' => 'required|max:255',
             'authors' => 'required|max:255',
             'description' => 'nullable',
-            'release_date' => 'required|date',
+            'released_at' => 'required|date|before:now',
             'cover_image' => 'nullable|url',
             'pages' => 'required|integer|min:1',
-            'language_code' => 'required|max:3',
-            'isbn' => 'required|unique:books|regex:/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/i',
+            'language_code' => 'max:3',
+            'isbn' => ['required',
+                        'regex:/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/i',
+                        Rule::unique('books')->ignore(request('book'))],
             'in_stock' => 'required|integer|min:0',
-            'genres' => 'array|nullable'
+            'genres' => 'required|array|exists:genres,id'
         ];
+
+        if (in_array($this->method(), ['PUT', 'PATCH'])) {
+            $rules['language_code'] = [
+                'required',
+                'max:255'
+            ];
+        }
+        return $rules;
     }
 }

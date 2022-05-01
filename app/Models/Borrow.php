@@ -15,7 +15,9 @@ class Borrow extends Model
         'status',
         'request_processed_at',
         'deadline',
-        'returned_at'
+        'returned_at',
+        'request_managed_by',
+        'return_managed_by'
     ];
 
     public function book() {

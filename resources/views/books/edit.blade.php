@@ -2,13 +2,12 @@
 
 @section('content')
 <h2>Edit book</h2>
-<form action="/books/{{ $book->id }}" method="post">
-
-@method('put')
+<form action="{{ route('books.update', $book->id) }}" method="post">
 @csrf
+@method('PUT')
 
 <?php $nameField='title'; ?>
-<div class="form-group">
+<div class="row col-md-6 form-group">
     <label for="name">Book title</label>
     <input name="{{ $nameField }}" type="text" class="form-control @error($nameField) is-invalid @enderror" id="{{ $nameField }}" placeholder=""
         value="{{ old($nameField, $book[$nameField]) }}"
@@ -21,8 +20,8 @@
     @enderror
 </div>
 
-<div class="form-group">
-    <label for="authors">Description</label>
+<div class="row col-md-6 form-group">
+    <label for="authors">Authors</label>
     <textarea name="authors" class="form-control @error('authors') is-invalid @enderror" id="authors" rows="3">{{ old('authors', $book->authors)}}</textarea>
 
     @error('authors')
@@ -32,7 +31,7 @@
     @enderror
 </div>
 
-<div class="form-group">
+<div class="row col-md-6 form-group">
     <label for="released_at">Released at</label>
     <input name="released_at" type="date" class="form-control @error('released_at') is-invalid @enderror" id="released_at" placeholder="" value="{{ old('released_at',  $book->released_at) }}">
 
@@ -66,6 +65,17 @@
 </div>
 
 <div class="row col-md-6 form-group">
+    <label for="language_code">Language code</label>
+    <input name="language_code" type="text" class="form-control @error('language_code') is-invalid @enderror" id="language_code" placeholder="" value="{{ old('language_code', $book->language_code) }}">
+
+    @error('language_code')
+    <div class="invalid-feedback">
+        {{ $message }}
+    </div>
+    @enderror
+</div>
+
+<div class="row col-md-6 form-group">
     <label for="description">Description</label>
     <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="description" rows="3">{{ old('description', $book->description)}}</textarea>
 
@@ -77,7 +87,7 @@
 </div>
 
 <div class="row col-md-6 form-group d-flex flex-wrap @error('genres') is-invalid @enderror">
-    @foreach ($book->genres as $genre)
+    @foreach ($genres as $genre)
     <div class="custom-control custom-switch col-sm-3">
         <input
             type="checkbox"

@@ -1,8 +1,8 @@
 @extends('layouts.base')
 
 @section('content')
-<h2>New genre</h2>
-<form action="/genres/{{ $genre->id }}" method="POST">
+<h2>Edit genre</h2>
+<form action="{{ route('genres.update',$genre->id) }}" method="POST">
 @method("PUT")
 @csrf
 <?php $nameField='name';
@@ -41,7 +41,7 @@ $styleField='style';
 </div>
 
 <div class="form-group">
-    <button type="submit" class="btn btn-primary">Add genre</button>
+    <button type="submit" class="btn btn-primary">Update genre</button>
 </div>
 </form>
 @endsection

@@ -9,16 +9,16 @@
 
         <div class="col-md-6">
             <div class="d-flex justify-content-center">
-                <div class="card" >
+                <div class="card" style="flex: 0 0 50%; min-width: 100%;">
                     {{-- <div class="card-header">
                     </div> --}}
                     <div class="card-body">
                         <h3 class="card-title">{{ $borrow->book->title }}</h3>
                         <br/>
-                        <p class="card-text"><small class="text-muted">Authors:</small></p>
-                        <h6 class="card-subtitle">{{ $borrow->book->authors }}</h6>
-                        <br/>
+                        <p class="card-text"><small class="text-muted">Authors: &nbsp;</small> <span class="h6">{{ $borrow->book->authors }}</span></p>
                         <p class="card-text"><small class="text-muted">Date of publish: {{ $borrow->book->released_at }}</small></p>
+                        <a href="{{route('books.show', $borrow->book->id)}}" class="btn btn-primary">Open</a>
+                        <hr/>
                         <p class="card-text"><small class="text-muted">Reader: {{ $borrow->reader->name }}</small></p>
                         <p class="card-text"><small class="text-muted">Date of rental request: {{ $borrow->created_at }}</small></p>
                         <p class="card-text"><small class="text-muted">Status: {{ $borrow->status }}</small></p>
@@ -36,9 +36,12 @@
                         @endif
 
                         @if(Auth::user()->is_librarian)
-                        <form method="POST" action="/borrows/{{$borrow->id}}">
+                        <hr/>
+                        <form method="POST" action="{{route('borrows.update', $borrow->id)}}">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="returned_at" value="" />
+                            <input type="hidden" name="return_managed_by" value="{{Auth::id()}}" />
                             <div class="row mb-3">
                                 <label for="deadline">Deadline</label>
                                 <input name="deadline" type="date" class="form-control @error('deadline') is-invalid @enderror" id="deadline" placeholder="" value="{{ old('deadline',  $borrow->deadline) }}">
@@ -79,7 +82,6 @@
                             </div>
                         </form>
                         @endif
-                        {{-- <p class="card-text"><small class="text-muted">Number of available books: {{ $available_books }}</small></p> --}}
                     </div>
 
                 </div>

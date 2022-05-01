@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\Borrow;
-use Illuminate\Http\Request;
-use App\Http\Requests\BookFormRequest;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Requests\BookFormRequest;
+use Illuminate\Support\Arr;
 
 class BookController extends Controller
 {
@@ -40,24 +40,19 @@ class BookController extends Controller
         ]);
     }
 
-    public function store(Request $request){
-        dd($request);
-        // $validated_data = $request->validated();
-        return;
-        // $validated_data = $request->validated();
-        // $input = $request->collect();
-        // $book = new Book(){
-        //     'title' => $request->input('title'),
-        //     'authors' => $request->input('authors'),
-        //     'released_at' => $request->input('released_at'),
-        //     'isbn' => $request->input('isbn'),
-        //     'cover_image' => $request->input('cover_image'),
-        //     'pages' => $request->input('pages'),
-        //     'language_code' =>
-        // }
-        // $book = Book::create();
-
-        return redirect()->action('${App\Http\Controllers\HomeController@index}');
+    public function store(BookFormRequest $request){
+        try {
+            $validated_data = $request->validated();
+            $genres = $validated_data['genres'] ?? [];
+            $validated_data['language_code'] = $validated_data['language_code'] ?? 'hu';
+            // $book = Book::create($validated_data->except(['genres']));
+            $book =  Book::create(Arr::except($validated_data, 'genres'));
+            $book->genres()->sync($genres);
+            return redirect()->route('home');
+        }
+        catch(Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
     }
 
     /**
@@ -103,8 +98,10 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
+        $genres = Genre::all();
         return view('books/edit', [
-            'book' => $book
+            'book' => $book,
+            'genres' => $genres
         ]);
     }
 
@@ -118,7 +115,8 @@ class BookController extends Controller
     public function update(Book $book, BookFormRequest $request)
     {
         $validated_data = $request->validated();
-        $project->update($validated_data);
+        $book->update(Arr::except($validated_data, 'genres'));
+        $book->genres()->sync($validated_data['genres'] ?? []);
         return redirect()->route('books.show', $book->id);
     }
 

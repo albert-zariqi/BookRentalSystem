@@ -20,28 +20,44 @@ class BorrowController extends Controller
     public function index()
     {
         $user_id = Auth::id();
-
+        $user = Auth::user();
         // $all_rentals = Borrow::where('reader_id', $user_id)
         //                             ->get();
 
-        $rentals_pending = Borrow::where('reader_id', $user_id)->where('status', 'PENDING')->get();
-        $accepted_intime = Borrow::where('reader_id', $user_id)->where('status', 'ACCEPTED')
+        $rentals_pending = $user->is_librarian
+            ? Borrow::where('status', 'PENDING')->get()
+            : Borrow::where('reader_id', $user_id)->where('status', 'PENDING')->get();
+
+        $accepted_intime = $user->is_librarian
+            ? Borrow::where('status', 'ACCEPTED')
+                ->where('deadline', '>', now())
+                ->get()
+            : Borrow::where('reader_id', $user_id)->where('status', 'ACCEPTED')
+                                        ->where('deadline', '>', now())
+                                        ->get();
+
+
+        $accepted_late = $user->is_librarian
+            ? Borrow::where('status', 'ACCEPTED')
+                ->where('deadline', '<', now())
+                ->get()
+            : Borrow::where('reader_id', $user_id)->where('status', 'ACCEPTED')
                                         ->where('deadline', '<', now())
                                         ->get();
-        $rejected_rentals = Borrow::where('reader_id', $user_id)->where('status', 'REJECTED')->get();
-        $returned_rentals = Borrow::where('reader_id', $user_id)->where('status', 'RETURNED')->get();
-        // dd([
-        //     'user' => $user_id,
-        //     'pending_rentals'=> $rentals_pending,
-        //     'accepted_intime' => $accepted_intime,
-        //     'rejected_rentals' => $rejected_rentals,
-        //     'returned_rentals' => $returned_rentals
-        // ]);
-        // return;
+
+        $rejected_rentals = $user->is_librarian
+            ? Borrow::where('status', 'REJECTED')->get()
+            : Borrow::where('reader_id', $user_id)->where('status', 'REJECTED')->get();
+
+        $returned_rentals = $user->is_librarian
+            ? Borrow::where('status', 'RETURNED')->get()
+            : Borrow::where('reader_id', $user_id)->where('status', 'RETURNED')->get();
+
         return view('borrows.index', [
             'user' => $user_id,
             'pending_rentals'=> $rentals_pending,
             'accepted_intime' => $accepted_intime,
+            'accepted_late' => $accepted_late,
             'rejected_rentals' => $rejected_rentals,
             'returned_rentals' => $returned_rentals
         ]);
@@ -68,9 +84,21 @@ class BorrowController extends Controller
         try{
             $validated_data = $request->validated();
 
+            $active_borrows = Borrow::whereIN('status', array('ACCEPTED', 'PENDING'))
+                                ->where('reader_id', Auth::id())
+                                ->where('book_id', $validated_data['book_id'])
+                                ->get();
+
+            if (count($active_borrows) > 0)
+            {
+                $error = \Illuminate\Validation\ValidationException::withMessages([
+                    'book_id' => 'This user has already an active borrow request!'
+                 ]);
+                 throw $error;
+            }
+
             $borrow = Borrow::create($validated_data);
-            $book = Book::where('id', $borrow->book->id);
-            return redirect()->action([BookController::class, 'show'], ['book' => $book]);
+            return redirect()->route('books.show',  $borrow->book->id);
         }
         catch(Exception $exc){
             throw new Exception($exc->getMessage());
@@ -110,16 +138,21 @@ class BorrowController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Borrow $borrow, Request $request)
+    public function update(Borrow $borrow, BorrowFormRequest $request)
     {
-        dd($request);
-        return;
-        // $validated_data = $request->validated();
+        $validated_data = $request->validated();
 
-        $borrow->update($request->collection());
-        return redirect()->action('borrows.show', [
-            'borrow' => $borrow
-        ]);
+        if ($validated_data['status'] == 'RETURNED' && $borrow->status != 'RETURNED'){
+            $validated_data['returned_at'] = now();
+            $validated_data['return_managed_by'] = Auth::id();
+        }
+        else if ($validated_data['status'] == 'ACCEPTED' && $borrow->status != 'ACCEPTED'){
+            $validated_data['request_processed_at'] = now();
+            $validated_data['request_managed_by'] = Auth::id();
+        }
+
+        $borrow->update($validated_data);
+        return redirect()->route('borrows.show', $borrow->id);
     }
 
     /**

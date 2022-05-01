@@ -4,7 +4,8 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            <br/>
+            <div class="card"  style="flex: 0 0 50%; min-width: 100%;">
                 <div class="card-header">Profile</div>
 
                 <div class="card-body">

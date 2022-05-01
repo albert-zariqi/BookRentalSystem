@@ -8,7 +8,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="d-flex justify-content-center">
-                <div class="card" >
+                <div class="card"  style="flex: 0 0 50%; min-width: 100%;">
                     {{-- <div class="card-header">
                     </div> --}}
                     @if ($book->cover_image)
@@ -32,10 +32,7 @@
                     @if (Auth::user()->is_librarian)
                         <hr/>
                         <div class="d-inline">
-                            <form action="/books/{{$book->id}}" method="POST" class="d-inline">
-                                @csrf
-                                <button class="btn btn-info">Edit</button>
-                            </form>
+                            <a href="{{route('books.edit', $book->id)}}" class="btn btn-info">Edit</a>
                             <form action="/books/{{$book->id}}" method="POST" class="d-inline">
                                 @method("DELETE")
                                 @csrf
@@ -53,7 +50,12 @@
                             <input type="hidden" name="reader_id" id="reader_id" value="{{Auth::id()}}" />
                             <input type="hidden" name="book_id" id="book_id" value="{{$book->id}}" />
                             <input type="hidden" name="status" id="status" value="PENDING" />
-                            <button type="submit" class="btn btn-success" {{ ($has_active_rental) ? "disabled" : "" }}>Borrow this book</button>
+                            <button type="submit" class="btn btn-success @error('book_id') is-invalid @enderror" {{ ($has_active_rental) ? "disabled" : "" }}>Borrow this book</button>
+                            @error('book_id')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </form>
                         </div>
                         <hr/>

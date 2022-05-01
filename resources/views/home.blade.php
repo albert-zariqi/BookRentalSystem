@@ -49,20 +49,20 @@
     <br/>
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+            <div class="card text-dark bg-light mb-3"  style="flex: 0 0 50%; min-width: 50%;">
                 <div class="card-body">
-                  <h5 class="card-title">Number of users in the system</h5>
-                  <p class="card-text">{{ $users }}</p>
-                  {{-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
+                  <h4 class="card-title">Number of users in the system</h4>
+                  <hr/>
+                  <p class="card-text text-center h5">{{ $users }}</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+            <div class="card text-white bg-info mb-3"  style="flex: 0 0 50%; min-width: 50%;">
                 <div class="card-body">
-                  <h5 class="card-title">Number of genres</h5>
-                  <p class="card-text">{{ $genres_count }}</p>
-                  {{-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
+                  <h4 class="card-title">Number of genres</h4>
+                  <hr/>
+                  <p class="card-text text-center h5">{{ $genres_count }}</p>
                 </div>
             </div>
         </div>
@@ -70,20 +70,20 @@
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card text-dark bg-info mb-3" style="max-width: 18rem;">
+            <div class="card text-white bg-success mb-3" style="flex: 0 0 50%; min-width: 50%;">
                 <div class="card-body">
-                  <h5 class="card-title">Number of books</h5>
-                  <p class="card-text">{{ $books }}</p>
-                  {{-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
+                  <h4 class="card-title">Number of books</h5>
+                  <hr/>
+                  <p class="card-text text-center h5">{{ $books }}</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+            <div class="card text-white bg-warning mb-3"  style="flex: 0 0 50%; min-width: 50%;">
                 <div class="card-body">
-                  <h5 class="card-title">Number of active book rentals (in accepted status)</h5>
-                  <p class="card-text">{{ $book_rentals }}</p>
-                  {{-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
+                  <h4 class="card-title">Number of active book rentals</h4>
+                  <hr/>
+                  <p class="card-text text-center h5">{{ $book_rentals }}</p>
                 </div>
             </div>
         </div>
@@ -110,7 +110,6 @@
                                 @endauth
                             <div>
                         </li>
-                            {{-- <a href="{{ route('books.show', $book->id) }}" class="btn btn-primary">Open</a> --}}
                 @endforeach
             </ul>
         </div>
