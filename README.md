@@ -1,6 +1,6 @@
 <h2>Albert Zariqi</h2>
 <h3>LBNWHM</h3>
-This solution was submitted and prepared by stundent named above for the home assignment of the Web engineering course.
+This solution was submitted and prepared by student named above for the home assignment of the Web engineering course.
 I declare that this solution is my own work.
 I have not copied or used third party solutions.
 I have not passed my solution to my classmates, neither  made it public.
